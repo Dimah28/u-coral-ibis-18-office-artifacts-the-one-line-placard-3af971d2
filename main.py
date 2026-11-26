@@ -23,6 +23,17 @@ def reject(message):
     raise SystemExit(message)
 
 
+def ends_with_sentence_punctuation(text):
+    """Return True when text ends in sentence punctuation.
+
+    A trailing quote mark is stripped first, so a sentence that ends
+    inside quotes (e.g. ...sacrifice.') still counts as ending in
+    sentence punctuation.
+    """
+    core = text.rstrip("'\"")
+    return bool(core) and core[-1] in ENDERS
+
+
 def check_shape(text):
     """Reject the placard if its shape breaks the bounty gate.
 
@@ -35,8 +46,7 @@ def check_shape(text):
         reject("placard must fit on one line")
     if len(text) > LIMIT:
         reject(f"placard is {len(text)} characters, over the {LIMIT} limit")
-    core = text.rstrip("'\"")
-    if not core or core[-1] not in ENDERS:
+    if not ends_with_sentence_punctuation(text):
         reject("placard must end with sentence-ending punctuation")
 
 
